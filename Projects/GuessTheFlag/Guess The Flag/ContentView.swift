@@ -15,10 +15,10 @@ struct ContentView: View {
     @State private var score = 0
     @State private var counter = 0
     @State private var gameOver:Bool = false
-    @State private var finalScore = 0
-    @State private var youLosed = false
     @State private var buttonScale: [CGFloat] = [1.0, 1.0, 1.0]
     @State private var buttonOpacity: [Double] = [1.0, 1.0, 1.0]
+    @State private var messages = ""
+    @State private var btnMsg = ""
 
     var body: some View {
         
@@ -77,39 +77,47 @@ struct ContentView: View {
             }
             .padding(20)
         }
+        
+        
         .alert(scoreTitle, isPresented: $showingScore) {
-            Button("Continue", action: askQuestions)
+            Button(btnMsg, action: askQuestions)
         } message: {
-            Text("Your score is: \(score)")
+            Text(messages)
         }
-        .alert("You Won", isPresented: $gameOver){
-            Button("Play Again", action: askQuestions)
-        } message:{
-                    Text("Your score is \(finalScore) out of 8")
-            }
-        .alert("Game Over!", isPresented: $youLosed){
-            Button("Play Again", action: askQuestions)
+        .alert(scoreTitle, isPresented: $gameOver) {
+            Button(btnMsg, action: askQuestions)
+        } message: {
+            Text(messages)
         }
+
     }
     
     
     private func flagTapped(_ number : Int){
+        
         if number == correctAnswer{
             scoreTitle = "Correct"
+            btnMsg = "Continue"
             score += 1
-            showingScore = true
             counter += 1
+            messages = "You Score in \(score)"
+            showingScore = true
         }
         else {
             if score == 0 {
-                youLosed = true
                 counter = 0
+                btnMsg = "Play Again"
+                scoreTitle = "You Lost"
+                messages = "Wrong! \n That’s the flag of \(countries[number])"
+                showingScore = true
             }
             else{
-                scoreTitle = "Wrong! \n That’s the flag of \(countries[number])"
-                score -= 1
-                showingScore = true
                 counter += 1
+                score -= 1
+                scoreTitle = "Wrong! \n That’s the flag of \(countries[number])"
+                btnMsg = "Continue"
+                messages = "Your Score is \(score)"
+                showingScore = true
             }
         }
         
@@ -117,9 +125,13 @@ struct ContentView: View {
     private func askQuestions (){
         countries.shuffle()
         correctAnswer = Int.random(in: 0...2)
-        if counter == 7 {
+        
+        if counter == 8 {
+            scoreTitle = "You Won"
+            btnMsg = "Play Again"
+            messages = "Your Score is \(score) ot of 8"
             gameOver = true
-            finalScore = score
+
             score = 0
         }
         
