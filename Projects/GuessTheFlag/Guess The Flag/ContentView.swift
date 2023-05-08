@@ -61,7 +61,7 @@ struct ContentView: View {
             .padding(20)
         }
         .alert(scoreTitle, isPresented: $showingScore) {
-            Button("Cancel", action: askQuestions)
+            Button("Continue", action: askQuestions)
         } message: {
             Text("Your score is: \(score)")
         }
