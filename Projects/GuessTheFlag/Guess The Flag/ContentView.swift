@@ -19,6 +19,8 @@ struct ContentView: View {
     @State private var buttonOpacity: [Double] = [1.0, 1.0, 1.0]
     @State private var messages = ""
     @State private var btnMsg = ""
+    let generator = UINotificationFeedbackGenerator()
+                //generator.notificationOccurred(.warning)
 
     var body: some View {
         
@@ -98,6 +100,7 @@ struct ContentView: View {
         if number == correctAnswer{
             scoreTitle = "Correct"
             btnMsg = "Continue"
+            generator.notificationOccurred(.success)
             score += 1
             counter += 1
             messages = "You Score in \(score)"
@@ -106,13 +109,15 @@ struct ContentView: View {
         else {
             if score == 0 {
                 counter = 0
+                generator.notificationOccurred(.warning)
                 btnMsg = "Play Again"
                 scoreTitle = "You Lost"
-                messages = "Wrong! \n That’s the flag of \(countries[number])"
+                messages = ""
                 showingScore = true
             }
             else{
                 counter += 1
+                generator.notificationOccurred(.error)
                 score -= 1
                 scoreTitle = "Wrong! \n That’s the flag of \(countries[number])"
                 btnMsg = "Continue"
@@ -126,8 +131,15 @@ struct ContentView: View {
         countries.shuffle()
         correctAnswer = Int.random(in: 0...2)
         
-        if counter == 8 {
-            scoreTitle = "You Won"
+        if counter == 1{
+            if score == 8{
+                scoreTitle = "You Won"
+            }
+            else {
+                scoreTitle = "Game Ended"
+                
+            }
+            generator.notificationOccurred(.success)
             btnMsg = "Play Again"
             messages = "Your Score is \(score) ot of 8"
             gameOver = true
