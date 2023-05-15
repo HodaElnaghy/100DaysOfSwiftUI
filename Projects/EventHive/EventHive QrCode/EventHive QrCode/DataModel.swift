@@ -9,11 +9,44 @@ struct WelcomeElement: Codable {
     let company: Company
 }
 
+struct UserLoginResponse : Decodable {
+    let username : String
+    let token : String
+}
+
+struct EventData : Codable {
+    let id : Int
+    let eventid : Int
+    let name : String
+    let price : Int
+}
+
+struct MyObject: Codable {
+    var id: Int
+    let img : String
+    let name : String
+    let isEnabled :Bool
+    let date : String
+    let tickettypes : [EventData]
+}
+
+typealias MyObjects = [MyObject]
+
+
+
 
 //{
-//    name : "h",
-//    image : "url"
-//    isAvailabe : false
+//    [{
+//        name : "h",
+//        image : "url"
+//        isAvailabe : false
+//    },
+//     {
+//         name : "g",
+//         image : "ur"
+//         isAvailabe : false
+//     }
+//    ]
 //}
 
 struct EventHive : Codable {
@@ -21,7 +54,9 @@ struct EventHive : Codable {
     let image : String
     let isAvailable : Bool
 }
-
+struct TicketStatus : Codable{
+    let isValid : Bool
+}
 
 
 // MARK: - Address
