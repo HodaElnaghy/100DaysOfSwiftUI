@@ -2,8 +2,8 @@ import SwiftUI
 
 struct LoginView: View {
     
-    @State private var username = ""
-    @State private var password = ""
+    @State private var username = "kminchelle"
+    @State private var password = "0lelplR"
     @State private var isUsernameEditing = false
     @State private var isPasswordEditing = false
     @FocusState private var isFocused : Bool

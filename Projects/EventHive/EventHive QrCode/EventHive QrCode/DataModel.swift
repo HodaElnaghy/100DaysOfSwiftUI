@@ -14,7 +14,7 @@ struct UserLoginResponse : Decodable {
     let token : String
 }
 
-struct EventData : Codable {
+struct EventData : Codable, Hashable {
     let id : Int
     let eventid : Int
     let name : String

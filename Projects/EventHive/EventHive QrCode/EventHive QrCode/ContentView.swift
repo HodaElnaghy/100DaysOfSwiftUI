@@ -6,6 +6,12 @@ struct QRCodeScannerExampleView: View {
     @State private var scannedCode: String?
     @State private var fetchedData: String?
     @State var event : MyObject
+    @State var selectedTicket = ""
+    @State var eventTicketTypes: [ Int: String] = [:]
+    enum EventTypes : CaseIterable {
+        case Regular , Vip , VVip
+    }
+    private let id = UUID()
     
     var body: some View {
         NavigationView {
@@ -14,10 +20,26 @@ struct QRCodeScannerExampleView: View {
                     NavigationLink("Next page", destination: NextView(codeTypes: code), isActive: .constant(true)).hidden()
                 }
                 
+                ForEach(0 ..< event.tickettypes.count) { i in
+                    Button(action: {
+                        selectedTicket = event.tickettypes[i].name
+                    }) {
+                        HStack {
+                            Text(event.tickettypes[i].name)
+                            if selectedTicket == event.tickettypes[i].name {
+                                Image(systemName: "checkmark.circle.fill")
+                                    .foregroundColor(.accentColor)
+                            }
+                        }
+                    }
+                }
+
+
                 
                 
                 
-                Button("\(event.name)") {
+                
+                Button("\(selectedTicket)") {
                     isPresentingScanner = true
                     print(h)
                 }
