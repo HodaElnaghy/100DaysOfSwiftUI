@@ -58,12 +58,12 @@ struct LoginView: View {
                     NavigationLink(destination: Events(), isActive: $isAuthenticated) {
                         EmptyView()
                     }
-                        Button("Login") {
-                            login(username: username, password: password)
-                            isAuthenticated = true
-                        //    self.presentationMode.wrappedValue.dismiss()
+                    Button("Login") {
+                        login(username: username, password: password) { isAuthenticated in
+                            self.isAuthenticated = isAuthenticated
+                            // Perform any additional actions based on the authentication status
                         }
-                        
+                    } 
                         .font(.headline)
                         .foregroundColor(Color("HiveWhite"))
                         .padding()

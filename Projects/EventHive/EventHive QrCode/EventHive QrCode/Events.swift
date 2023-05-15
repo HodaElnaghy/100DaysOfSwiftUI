@@ -4,6 +4,7 @@ public var h = "hoda"
 struct Events: View {
     @State public var eventArray = [MyObject]()
     @State public var selectedEventID: Int?
+    @State var tokenData = "d"
     
     var body: some View {
         VStack {
@@ -12,6 +13,7 @@ struct Events: View {
                     NavigationLink(
                         destination: QRCodeScannerExampleView(event : event),
                         label: {
+                            //let _ = print(tokenData)
                             ExtractedView(event: $event)
                         }
                     )
