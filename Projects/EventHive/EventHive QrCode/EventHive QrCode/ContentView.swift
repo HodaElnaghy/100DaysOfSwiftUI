@@ -5,7 +5,7 @@ struct QRCodeScannerExampleView: View {
     @State private var isPresentingScanner = false
     @State private var scannedCode: String?
     @State private var selectedTicket = ""
-    @State var isValid : Bool? = nil
+    @State var isValid = false
     @State var showAlert = false
     
     
@@ -19,13 +19,7 @@ struct QRCodeScannerExampleView: View {
     var body: some View {
         NavigationView {
             VStack(spacing: 10) {
-                if let code = scannedCode {
-                    NavigationLink(
-                        destination: NextView(codeTypes: code),
-                        isActive: .constant(true),
-                        label: { EmptyView() }
-                    ).hidden()
-                }
+                
                 
                 ForEach(0..<event.tickettypes.count) { i in
                     Button(action: {
@@ -41,7 +35,7 @@ struct QRCodeScannerExampleView: View {
                     }
                 }
   
-                Button("\(selectedTicket)") {
+                Button("Scan") {
                     isPresentingScanner = true
                 }
                 .font(.headline)
@@ -51,7 +45,6 @@ struct QRCodeScannerExampleView: View {
                 .background(Color("HiveButton"))
                 .cornerRadius(15.0)
                 
-                Text(scannedCode ?? "")
                 
             }
             .sheet(isPresented: $isPresentingScanner) {
@@ -63,6 +56,7 @@ struct QRCodeScannerExampleView: View {
                         
                         EventHive_QrCode.isValid(qrData: scannedCode ?? "", name: selectedTicket, eventid: event.id) { isValid in
                             self.isValid = isValid
+                            print(isValid)
                             showAlert = true
                         }
                         
@@ -70,7 +64,7 @@ struct QRCodeScannerExampleView: View {
                         print(error.localizedDescription)
                     }
                 }
-                .alert("h", isPresented: $showAlert) {
+                .alert(Text(isValid ? "Allow the user" : "Don't allow the user"), isPresented: $showAlert) {
                     Button("OK", action: endScanning)
                 }
                 
@@ -92,16 +86,3 @@ struct QRCodeScannerExampleView: View {
     
 }
 
-struct NextView: View {
-    var codeTypes: String
-    
-    var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundColor(.accentColor)
-            Text("Hello, world!")
-        }
-        .padding()
-    }
-}

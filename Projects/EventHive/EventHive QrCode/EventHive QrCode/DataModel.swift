@@ -23,6 +23,7 @@ struct EventData : Codable, Hashable {
     let eventid : Int
     let name : String
     let price : Int
+    let Available : Bool
 }
 
 struct MyObject: Codable {
@@ -31,6 +32,7 @@ struct MyObject: Codable {
     let name : String
     let isEnabled :Bool
     let date : String
+    let venue : String
     let tickettypes : [EventData]
 }
 

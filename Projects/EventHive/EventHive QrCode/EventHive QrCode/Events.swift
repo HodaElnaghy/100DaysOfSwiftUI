@@ -46,15 +46,29 @@ struct Events: View {
     }
     
     private func fetchData() async {
-        let url = URL(string: "http://localhost:3001/")
+        guard let tokenData = KeychainHelper.shared.read(service: "access-token", account: "edgeUI") else {
+            print("Token not found in keychain")
+            return
+        }
+        
+        let token = String(data: tokenData, encoding: .utf8) ?? ""
+        
+        let urlString = "http://34.125.23.115:8000/api/event/app"
+        let url = URL(string: urlString)
+        
+        var request = URLRequest(url: url!)
+        request.addValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        
         do {
-            let (data, _) = try await URLSession.shared.data(from: url!)
+            let (data, _) = try await URLSession.shared.data(for: request)
+            
             eventArray = try JSONDecoder().decode(MyObjects.self, from: data)
             print(eventArray)
         } catch {
-            print(error)
+            print("Error: \(error)")
         }
     }
+
 }
 
 struct Events_Previews: PreviewProvider {
@@ -67,10 +81,29 @@ struct ExtractedView: View {
     @Binding var event : MyObject
     var body: some View {
         VStack(alignment: .leading){
-            Image(event.img)
-                .resizable()
-                .aspectRatio(contentMode: .fill)
-                .clipShape(RoundedRectangle(cornerRadius: 10))
+            
+            AsyncImage(url: URL(string: event.img)) { phase in
+                switch phase {
+                case .success(let image):
+                    image
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                case .failure(_):
+                    // Placeholder view if image fails to load
+                    Color.gray
+                case .empty:
+                    // Placeholder view while the image is being loaded
+                    Color.gray
+                @unknown default:
+                    // Placeholder view for any unknown state
+                    Color.gray
+                }
+            }
+            
+            
+            
+            
             Text(event.name)
                 .font(.title3.bold())
                 .padding(.bottom,1)

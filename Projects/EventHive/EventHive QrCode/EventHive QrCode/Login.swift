@@ -1,6 +1,6 @@
 import Foundation
 func login(username: String, password: String, completion: @escaping (Bool) -> Void) {
-    let loginURL = URL(string: "https://dummyjson.com/auth/login")!
+    let loginURL = URL(string: "http://34.125.23.115:8000/api/user/login")!
     var request = URLRequest(url: loginURL)
     let body = ["username": username, "password": password]
     let bodyData = try? JSONSerialization.data(withJSONObject: body)

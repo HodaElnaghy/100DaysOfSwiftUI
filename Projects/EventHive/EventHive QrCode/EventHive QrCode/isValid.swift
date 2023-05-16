@@ -10,9 +10,9 @@ func isValid(qrData: String, name: String, eventid: Int, completion: @escaping (
     
     let token = String(data: tokenData, encoding: .utf8) ?? ""
     
-    let isValidURL = URL(string: "https://dummyjson.com/auth/login")!
+    let isValidURL = URL(string: "http://34.125.23.115:8000/api/ticket/verify")!
     var request = URLRequest(url: isValidURL)
-    let body = ["qrData": qrData, "name": name, "eventid": eventid] as [String: Any]
+    let body = ["ticketId": qrData, "gate": name, "eventId": eventid] as [String: Any]
     let bodyData = try? JSONSerialization.data(withJSONObject: body)
     request.httpMethod = "POST"
     request.httpBody = bodyData
@@ -26,12 +26,16 @@ func isValid(qrData: String, name: String, eventid: Int, completion: @escaping (
         }
         
         let responseJSON = try? JSONSerialization.jsonObject(with: data)
-        
-        if let responseDict = responseJSON as? [String: Any], let isValid = responseDict["isValid"] as? Bool {
+        print(responseJSON)
+        if let responseDict = responseJSON as? [String: Any], let isValidNumber = responseDict["valid"] as? NSNumber {
+            let isValid = isValidNumber.boolValue
+            print(isValid)
+            
             completion(isValid)
         } else {
             completion(false)
         }
+
     }.resume()
 }
 
