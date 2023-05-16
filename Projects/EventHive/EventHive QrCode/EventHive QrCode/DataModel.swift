@@ -9,9 +9,13 @@ struct WelcomeElement: Codable {
     let company: Company
 }
 
-struct UserLoginResponse : Decodable {
-    let username : String
-    let token : String
+//struct UserLoginResponse : Decodable {
+//    let username : String
+//    let token : String
+//}
+
+struct qrCodeScanRespone : Decodable {
+    let isValid : String
 }
 
 struct EventData : Codable, Hashable {

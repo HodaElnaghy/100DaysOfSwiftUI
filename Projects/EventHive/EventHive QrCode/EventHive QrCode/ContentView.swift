@@ -4,23 +4,30 @@ import CodeScanner
 struct QRCodeScannerExampleView: View {
     @State private var isPresentingScanner = false
     @State private var scannedCode: String?
-    @State private var fetchedData: String?
-    @State var event : MyObject
-    @State var selectedTicket = ""
-    @State var eventTicketTypes: [ Int: String] = [:]
-    enum EventTypes : CaseIterable {
-        case Regular , Vip , VVip
+    @State private var selectedTicket = ""
+    @State var isValid : Bool? = nil
+    @State var showAlert = false
+    
+    
+    // Add a variable to hold the event object
+    @State var event: MyObject
+    
+    enum EventTypes: CaseIterable {
+        case Regular, Vip, VVip
     }
-    private let id = UUID()
     
     var body: some View {
         NavigationView {
             VStack(spacing: 10) {
                 if let code = scannedCode {
-                    NavigationLink("Next page", destination: NextView(codeTypes: code), isActive: .constant(true)).hidden()
+                    NavigationLink(
+                        destination: NextView(codeTypes: code),
+                        isActive: .constant(true),
+                        label: { EmptyView() }
+                    ).hidden()
                 }
                 
-                ForEach(0 ..< event.tickettypes.count) { i in
+                ForEach(0..<event.tickettypes.count) { i in
                     Button(action: {
                         selectedTicket = event.tickettypes[i].name
                     }) {
@@ -33,15 +40,9 @@ struct QRCodeScannerExampleView: View {
                         }
                     }
                 }
-
-
-                
-                
-                
-                
+  
                 Button("\(selectedTicket)") {
                     isPresentingScanner = true
-                    print(h)
                 }
                 .font(.headline)
                 .foregroundColor(Color("HiveWhite"))
@@ -49,54 +50,58 @@ struct QRCodeScannerExampleView: View {
                 .frame(width: 300, height: 50)
                 .background(Color("HiveButton"))
                 .cornerRadius(15.0)
-                Text(scannedCode ?? "")
-                Text(fetchedData ?? "")
                 
-                //Text("Scan a QR code to begin")
+                Text(scannedCode ?? "")
+                
             }
             .sheet(isPresented: $isPresentingScanner) {
-                CodeScannerView(codeTypes: [.qr]) { response in
-                    if case let .success(result) = response {
-                        let request = URLRequest(url: URL(string: result.string)!)
-                        URLSession.shared.dataTask(with: request) { data, response, error in
-                            guard let data = data else { return }
-                            do {
-                                let decodedData = try JSONDecoder().decode(TicketStatus.self, from: data)
-                                fetchedData = decodedData.isValid ? "This person is allowed" : "This person is not allowed"
-                            } catch {
-                                print(error)
-                            }
-                        }.resume()
+                CodeScannerView(codeTypes: [.qr], simulatedData: "Paul Hudson") { result in
+                    switch result {
+                    case .success(let code):
+                        print("Scanned text: \(code)")
+                        scannedCode = code.string
                         
-                        if case let .success(result) = response {
-                            scannedCode = result.string
-                            isPresentingScanner = false
+                        EventHive_QrCode.isValid(qrData: scannedCode ?? "", name: selectedTicket, eventid: event.id) { isValid in
+                            self.isValid = isValid
+                            showAlert = true
                         }
+                        
+                    case .failure(let error):
+                        print(error.localizedDescription)
                     }
                 }
+                .alert("h", isPresented: $showAlert) {
+                    Button("OK", action: endScanning)
+                }
+                
+                
+                
+                
+            }
+            
+
+            
         }
+    }
+    private func endScanning (){
+        isPresentingScanner = false
+    }
+    
+    
+    
+    
+}
+
+struct NextView: View {
+    var codeTypes: String
+    
+    var body: some View {
+        VStack {
+            Image(systemName: "globe")
+                .imageScale(.large)
+                .foregroundColor(.accentColor)
+            Text("Hello, world!")
         }
+        .padding()
     }
 }
-    
-    struct NextView: View {
-        var codeTypes: String
-        var body: some View {
-            VStack {
-                Image(systemName: "globe")
-                    .imageScale(.large)
-                    .foregroundColor(.accentColor)
-                Text("Hello, world!")
-            }
-            .padding()
-        }
-    }
-    
-//    struct ContentView_Previews: PreviewProvider {
-//        @Binding var event: MyObject
-//
-//        static var previews: some View {
-//            QRCodeScannerExampleView(event: event)
-//        }
-//    }
-
