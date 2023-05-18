@@ -21,15 +21,49 @@ struct QRCodeScannerExampleView: View {
             VStack(spacing: 10) {
                 
                 
+                
+                AsyncImage(url: URL(string: event.img)) { phase in
+                    switch phase {
+                    case .success(let image):
+                        image
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                    case .failure(_):
+                        // Placeholder view if image fails to load
+                        Color.gray
+                    case .empty:
+                        // Placeholder view while the image is being loaded
+                        Color.gray
+                    @unknown default:
+                        // Placeholder view for any unknown state
+                        Color.gray
+                    }
+                }
+                
+                
+                
+                
+                Text(event.name)
+                    .font(.title3.bold())
+                    .padding(.bottom,1)
+                Text(event.date)
+                    .foregroundStyle(.secondary)
+                    .font(.subheadline)
+                
+                
+                
+                
                 ForEach(0..<event.tickettypes.count) { i in
                     Button(action: {
                         selectedTicket = event.tickettypes[i].name
                     }) {
                         HStack {
                             Text(event.tickettypes[i].name)
+                                .foregroundColor(Color("HiveButton"))
                             if selectedTicket == event.tickettypes[i].name {
                                 Image(systemName: "checkmark.circle.fill")
-                                    .foregroundColor(.accentColor)
+                                    .foregroundColor(Color("HiveButton"))
                             }
                         }
                     }

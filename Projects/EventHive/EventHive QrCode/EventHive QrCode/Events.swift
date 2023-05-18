@@ -1,5 +1,4 @@
 import SwiftUI
-public var h = "hoda"
 
 struct Events: View {
     @State public var eventArray = [MyObject]()

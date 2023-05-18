@@ -12,19 +12,15 @@ func login(username: String, password: String, completion: @escaping (Bool) -> V
             completion(false)
             return
         }
-        
         let responseJSON = try? JSONSerialization.jsonObject(with: data)
-        
         if let responseJSON = responseJSON as? [String: Any] {
             guard let token = responseJSON["token"] as? String else {
                 completion(false)
                 return
             }
-            
             KeychainHelper.shared.save(token.data(using: .utf8)!, service: "access-token", account: "edgeUI")
             let tokenData = KeychainHelper.shared.read(service: "access-token", account: "edgeUI")
             print(String(data: tokenData!, encoding: .utf8)!)
-            
             completion(true)
         } else {
             completion(false)

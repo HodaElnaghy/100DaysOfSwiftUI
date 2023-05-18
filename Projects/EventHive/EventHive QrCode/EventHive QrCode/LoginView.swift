@@ -7,8 +7,7 @@ struct LoginView: View {
     @State private var isUsernameEditing = false
     @State private var isPasswordEditing = false
     @FocusState private var isFocused : Bool
-    @State private var isAuthenticated = false
-    //@Environment(\.presentationMode) var presentationMode : Binding<PresentationMode>
+    @State private var isAuthenticated = UserDefaults.standard.bool(forKey: "isLoggedIn")
     
     var body: some View {
         NavigationView {
@@ -58,9 +57,14 @@ struct LoginView: View {
                     NavigationLink(destination: Events(), isActive: $isAuthenticated) {
                         EmptyView()
                     }
+                    
+                    
+                    
                     Button("Login") {
+                        
                         login(username: username, password: password) { isAuthenticated in
                             self.isAuthenticated = isAuthenticated
+                            UserDefaults.standard.set(isAuthenticated, forKey: "isLoggedIn")
                             // Perform any additional actions based on the authentication status
                         }
                     } 
@@ -86,21 +90,23 @@ struct LoginView: View {
                         isFocused = false
                     }
                 }
-                //                ToolbarItem(placement: .principal) {
-                //                    Image("eventhive-logo")
-                //                        .resizable()
-                //                        .aspectRatio(contentMode: .fit)
-                //                        .frame(height: 200)
-                //                        .padding(.top, 220)
-                //                }
-                
                 
             }
             //.navigationBarTitleDisplayMode(.inline)
             .navigationBarBackButtonHidden(true)
+            
+            
+            
+            // make sure it is authenticated
+            
         }
         
     }
+    
+    
+    
+    // Is the user logged in
+    
     
 }
 
